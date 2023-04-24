@@ -16,24 +16,28 @@ const CreateMenu = async(req: Request, res: Response): Promise<Response>=>{
 };
 const GetListMenu = async(req: Request, res: Response): Promise<Response>=>{
     try {
-        const menu = await MasterMenu.findAll({
-            where: {
-                active: true
-            }
-        });
-        return res.status(200).send(helper.ResponseData(200, "Ok", null, menu));
-    } catch (error:any) {
-        return res.status(500).send(helper.ResponseData(500, "", error, null));
-    }
+		const menu = await MasterMenu.findAll({
+			where: {
+				active: true
+			}
+		});
+
+		return res.status(200).send(helper.ResponseData(200, "OK", null, menu));
+	} catch (error:any) {
+		return res.status(500).send(helper.ResponseData(500, "", error, null));
+	}
 };
-const GetAllMenu = async(req: Request, res: Response): Promise<Response>=>{
-    try {
-        const menu = await MasterMenu.findAll();
-        return res.status(200).send(helper.ResponseData(200, "Ok", null, menu));
-    } catch (error:any) {
-        return res.status(500).send(helper.ResponseData(500, "", error, null));
-    }
-};
+
+const GetAllMenu = async (req: Request, res: Response): Promise<Response> => {
+	try {
+		const menu = await MasterMenu.findAll();
+
+		return res.status(200).send(helper.ResponseData(200, "OK", null, menu));
+	} catch (error:any) {
+		return res.status(500).send(helper.ResponseData(500, "", error, null));
+	}
+}
+
 const GetDetailMenu = async(req: Request, res: Response): Promise<Response>=>{
     try {
         const {id} = req.params;
@@ -92,6 +96,7 @@ const SoftDeleteMenu = async(req: Request, res: Response): Promise<Response>=>{
             return res.status(404).send(helper.ResponseData(404, "Not Found", null, null));
         }
         menu.active = false;
+        await menu.save();
 
         return res.status(200).send(helper.ResponseData(200, "Removed", null, menu));
         

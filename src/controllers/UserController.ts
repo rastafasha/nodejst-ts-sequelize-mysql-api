@@ -171,10 +171,102 @@ const UserLogout = async (req: Request, res: Response): Promise<Response> => {
 		return res.status(500).send(helper.ResponseData(500, "", error, null));
 	}
 }
+
+const UpdateUser = async(req:Request, res: Response): Promise<Response> =>{
+    try {
+        const { id} = req.params;
+        const {firstName, lastName,} = req.body;
+
+        const user = await User.findByPk(id);
+        if(!user){
+            return res.status(404).send({
+                status: 404,
+                message: 'Data not found',
+                data: null
+            });
+        }
+
+        user.firstName = firstName;
+        user.lastName=lastName;
+
+        await user.save();
+
+        return res.status(200).send({
+            status: 200,
+            message: 'Ok',
+            data: user
+        });
+
+        
+    } catch (error: any) {
+        if(error != null && error instanceof Error){
+            return res.status(500).send({
+                status: 500,
+                message: error.message,
+                errors: error
+            });
+        }
+        return res.status(500).send({
+            status: 500,
+                message: 'Internal server error',
+                errors: error
+        });
+        
+    }
+}
+
+const UpdateUserRole = async(req:Request, res: Response): Promise<Response> =>{
+    try {
+        const {id} = req.params;
+        const {roleId} = req.body;
+        
+        const user = await User.findOne({
+            where:{
+                id: id
+            }
+        })
+        if(!user){
+            return res.status(404).send(helper.ResponseData(404, "Not Found", null, null));
+        }
+        user.roleId = roleId;
+        await user.save();
+
+        return res.status(200).send(helper.ResponseData(200, "Role Updated", null, user));
+        
+    } catch (error:any) {
+        return res.status(500).send(helper.ResponseData(500, "", error, null));
+    }
+}
+
+const ActivateUser = async(req:Request, res: Response): Promise<Response> =>{
+    try {
+        const {id} = req.params;
+        const {active} = req.body;
+        
+        const user = await User.findOne({
+            where:{
+                id: id
+            }
+        })
+        if(!user){
+            return res.status(404).send(helper.ResponseData(404, "Not Found", null, null));
+        }
+        user.active = active;
+        await user.save();
+
+        return res.status(200).send(helper.ResponseData(200, "User Activate", null, user));
+        
+    } catch (error:any) {
+        return res.status(500).send(helper.ResponseData(500, "", error, null));
+    }
+}
 export default {
     Register,
     UserLogin,
     RefeshToken,
     UserDetail,
-    UserLogout
+    UserLogout,
+    UpdateUser,
+    UpdateUserRole,
+    ActivateUser
 }
