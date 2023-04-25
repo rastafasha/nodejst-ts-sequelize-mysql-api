@@ -124,7 +124,8 @@ const DeletePermanent = async (req: Request, res: Response): Promise<Response> =
 		}
 
 		await submenu.destroy();
-		return res.status(200).send(helper.ResponseData(200, "Deleted", null, null));
+		return res.status(200).send(helper.ResponseData(200, "Deleted", null, submenu));
+		
 	} catch (error:any) {
 		return res.status(500).send(helper.ResponseData(500, "", error, null));
 	}

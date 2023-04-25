@@ -11,6 +11,7 @@ interface UserAttributes {
   lastName?: string | null,
   password?: string | null,
   accessToken?: string | null,
+  image?: string | null,
   active?: boolean | null,
   verified?: boolean | null,
 
@@ -32,6 +33,7 @@ class User extends Model<UserAttributes, UserInput> implements UserAttributes{
   public roleId!: number;
   public verified!: boolean;
   public accessToken!: string;
+  public image!: string;
   public active!: boolean;
 
   public readonly createdAt!: Date;
@@ -74,7 +76,10 @@ User.init({
     allowNull: true,
     type: DataTypes.TEXT
   },
-  
+  image: {
+    allowNull: true,
+    type: DataTypes.STRING
+  },
   active:{
     allowNull: true,
     type: DataTypes.BOOLEAN

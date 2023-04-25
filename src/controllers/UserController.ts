@@ -3,6 +3,9 @@ import User from "../db/models/user";
 import Role from "../db/models/role";
 import helper from "../helpers/helper";
 import passwordHelper from "../helpers/passwordHelper";
+import multer from 'multer';
+import path from 'path';
+import Address from "../db/models/address";
 
 const Register = async(req: Request, res: Response): Promise<Response>=>{
     try {
@@ -260,6 +263,59 @@ const ActivateUser = async(req:Request, res: Response): Promise<Response> =>{
         return res.status(500).send(helper.ResponseData(500, "", error, null));
     }
 }
+
+const getUserAddress = async(req:Request, res: Response): Promise<Response> =>{
+
+
+    try {
+
+        const {id} = req.params;
+        const user = await User.findOne({
+            include: [{
+                model: Address,
+            }],
+            where: { id: id }
+        })
+        return res.status(201).send(helper.ResponseData(201, "Created", null, user));
+        
+    } catch (error:any) {
+        return res.status(500).send(helper.ResponseData(500, "", error, null));
+    }
+
+}
+
+
+
+const storage = multer.diskStorage({
+    destination: (req: any,file: any,cb: any) => {
+        cb(null, 'uploads/users/')
+    },
+    filename: (req: any,file: any,cb: any) => {
+        cb(null, Date.now() + path.extname(file.originalname))
+    }
+})
+
+
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        // fileSize: '1000000'
+        fileSize: 1024 * 1024
+    },
+    fileFilter: (req, file, cb) => {
+        const fileTypes = /jpeg|jpg|png|gif/
+        const mimeType = fileTypes.test(file.mimetype)
+        const extname = fileTypes.test(path.extname(file.originalname))
+
+        if (mimeType && extname) {
+            return cb(null, true)
+        }
+        cb(new Error('Give proper files formate to upload'))
+    }
+}).single('image')
+
+
 export default {
     Register,
     UserLogin,
@@ -268,5 +324,7 @@ export default {
     UserLogout,
     UpdateUser,
     UpdateUserRole,
-    ActivateUser
+    ActivateUser,
+    upload,
+    getUserAddress
 }

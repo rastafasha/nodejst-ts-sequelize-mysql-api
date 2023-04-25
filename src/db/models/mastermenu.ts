@@ -1,4 +1,4 @@
-import {DataType, DataTypes, Model, Optional} from 'sequelize';
+import { DataTypes, Model, Optional} from 'sequelize';
 import connection from '../../config/dbConnect';
 
 
